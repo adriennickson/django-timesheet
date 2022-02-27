@@ -1,0 +1,6 @@
+firebase-adminsdk.json
+db.sqlite3
+ekwali_temps_de_travail/settings.py
+node_modules
+__pycache__/
+*.pyc

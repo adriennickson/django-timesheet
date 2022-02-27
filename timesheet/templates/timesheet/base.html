@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>
+      Tailwind Starter Template - Landing Page Template: Tailwind Toolbox
+    </title>
+    <meta name="description" content="Simple landind page" />
+    <meta name="keywords" content="" />
+    <meta name="author" content="" />
+    <link rel="stylesheet" href="{% static '/timesheet/css/app.css' %}"/>
+    <link rel="stylesheet" href="{% static '/timesheet/css/react-draft-wysiwyg.css' %}"/>
+    {% block extrahead %}
+    {% endblock %}
+
+  </head>
+  <body class="leading-normal tracking-normal text-white gradient" style="font-family: 'Source Sans Pro', sans-serif;">
+    <h1 class="text-3xl font-bold underline">
+        Hello world!
+    </h1>
+    <div class="min-h-full">
+      <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between h-16">
+            <div class="flex">
+              <div class="flex-shrink-0 flex items-center">
+                <a href="{% url 'dmz_index' %}" >
+                  <img class="h-8 w-auto" src="{% static '/timesheet/img/logo.png' %}" alt="Workflow">
+                </a>
+              </div>
+              <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
+                <!-- Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" -->
+                <a href="{% url 'timesheet_index' %}" class="px-1 pt-1 border-b-2 text-sm font-medium inline-flex items-center border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Dashboard</a>  
+                <a href ="{% url 'timesheet_list' %}" class="px-1 pt-1 border-b-2 text-sm font-medium inline-flex items-center border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Daily meeting</a>
+    
+              </div>
+            </div>
+            <div class="hidden sm:ml-6 sm:flex sm:items-center text-gray-500">
+              {% if user.is_authenticated %}Hello, {{ user.username }}. &nbsp;&nbsp;&nbsp;<a href="/logout">LOGOUT</a>{% endif %}
+            </div>
+            <div class="-mr-2 flex items-center sm:hidden">
+              <!-- Mobile menu button -->
+              <button type="button" class="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" aria-controls="mobile-menu" aria-expanded="false">
+                <span class="sr-only">Open main menu</span>
+                <!--
+                  Heroicon name: outline/menu
+    
+                  Menu open: "hidden", Menu closed: "block"
+                -->
+                <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                <!--
+                  Heroicon name: outline/x
+    
+                  Menu open: "block", Menu closed: "hidden"
+                -->
+                <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+    
+        <!-- Mobile menu, show/hide based on menu state. -->
+        <div class="sm:hidden" id="mobile-menu">
+          <div class="pt-2 pb-3 space-y-1">
+            <!-- Current: "bg-indigo-50 border-indigo-500 text-indigo-700", Default: "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800" -->
+            <a href="#" class="bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium" aria-current="page">Dashboard</a>
+    
+            <a href="#" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Team</a>
+    
+            <a href="#" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Projects</a>
+    
+            <a href="#" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Calendar</a>
+          </div>
+          <div class="pt-4 pb-3 border-t border-gray-200">
+            email
+          </div>
+        </div>
+      </nav>
+      <div class="py-10">
+        {% block content %}
+        {% endblock %}
+      </div>
+    </div>
+    {{ daily }}<br/><br/>
+    {{ daily|safe }}
+      <script type="text/javascript">
+        {% if daily %}
+          window.received_daily  = JSON.parse(JSON.stringify(`{{ daily|safe }}`));
+        {% endif %}
+        function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+        }      
+      </script>
+    <script src="{% static '/timesheet/js/bundle.js' %}" ></script>
+  </body>
+</html>

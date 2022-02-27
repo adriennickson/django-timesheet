@@ -1,0 +1,39 @@
+{
+  "name": "ekwali_temps_de_travail",
+  "version": "1.0.0",
+  "description": "",
+  "main": "static/js/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tailwind": "npx tailwindcss -i ./timesheet/static/timesheet/css/tailwindinput.css -o ./timesheet/static/timesheet/css/app.css",
+    "tailwinddev": "npx tailwindcss -i ./timesheet/static/timesheet/css/tailwindinput.css -o ./timesheet/static/timesheet/css/app.css --watch",
+    "start": "webpack serve --config ./webpack.config.js --mode development --port 3000",
+    "build": "webpack build --config ./webpack.config.js --mode development"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.17.5",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.16.7",
+    "@tailwindcss/forms": "^0.4.0",
+    "@tailwindcss/typography": "^0.5.2",
+    "babel-loader": "^8.2.3",
+    "css-loader": "^6.6.0",
+    "postcss-import": "^14.0.2",
+    "react-hot-loader": "^4.13.0",
+    "style-loader": "^3.3.1",
+    "tailwindcss": "^3.0.23",
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.7.4"
+  },
+  "dependencies": {
+    "draft-js": "^0.11.7",
+    "json5": "^2.2.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-draft-wysiwyg": "^1.14.7",
+    "react-hook-form": "^7.27.1"
+  }
+}

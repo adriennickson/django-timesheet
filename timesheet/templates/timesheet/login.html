@@ -1,0 +1,131 @@
+{% extends "timesheet/base.html" %}
+{% load get_env %}
+
+{% block extrahead %}
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-analytics.js";
+
+        // Add Firebase products that you want to use
+        import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from 'https://www.gstatic.com/firebasejs/9.6.7/firebase-auth.js'
+        // import { firestore } from 'https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore.js'
+    
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        const firebaseConfig = {
+            apiKey: "{{ 'FIREBASE_API_KEY'|env }}",
+            authDomain: "{{ 'FIREBASE_AUTH_DOMAIN'|env }}",
+            projectId: "{{ 'FIREBASE_PROJECT_ID'|env }}",
+            storageBucket: "{{ 'FIREBASE_STORAGE_BUCKET'|env }}",
+            messagingSenderId: "{{ 'FIREBASE_MESSAGING_SENDER_ID'|env }}",
+            appId: "{{ 'FIREBASE_APP_ID'|env }}",
+            measurementId: "{{ 'FIREBASE_MEASUREMENT_ID'|env }}"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+        const provider = new GoogleAuthProvider();
+        const auth = getAuth();
+
+        getRedirectResult(auth)
+        .then((result) => {
+            // This gives you a Google Access Token. You can use it to access Google APIs.
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const token = credential.accessToken;
+        
+            // The signed-in user info.
+            const user = result.user;
+            document.cookie = `firebaseAccessToken=${result.user.accessToken}`;
+            document.getElementById("firebaseAccessToken").value = result.user.accessToken
+            document.getElementById("firebaseForm").submit()
+
+        }).catch((error) => {
+            // Handle Errors here.
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // The email of the user's account used.
+            const email = error.email;
+            // The AuthCredential type that was used.
+            const credential = GoogleAuthProvider.credentialFromError(error);
+            // ...
+        });
+
+        document.getElementById("authWithGoogle").onclick  = () => {
+            signInWithRedirect(auth, provider);
+        }
+
+    
+    </script>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col items-center justify-center bg-white">
+	<div class="w-full sm:w-3/4 max-w-lg p-12 pb-6">
+
+        {% if form.errors %}
+        <p class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">Your username and password didn't match. Please try again.</p>
+        {% endif %}
+
+        {% if next %}
+            {% if user.is_authenticated %}
+            <p class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">Your account doesn't have access to this page. To proceed,
+            please login with an account that has access.</p>
+            {% else %}
+            <p class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">Please login to see this page.</p>
+            {% endif %}
+        {% endif %}
+    </div>
+
+<form method="post" action="{% url 'login' %}">
+{% csrf_token %}
+
+
+	<div class="w-full p-12 mt-4 pb-6 shadow-2xl rounded">
+		<div class="text-white pb-4 text-3xl font-semibold">EKWALI</div>
+
+        {{ form.username }}
+        {{ form.password }}
+
+        <div class="flex justify-between ...">
+            <button
+                class="inline-block mt-2 px-6 py-2 rounded bg-gray-600 hover:bg-gray-700 focus:bg-gray-800 shadow-lg"
+            >
+                Login
+            </button>
+            <button
+                type="button"
+                class="inline-block mt-2 px-6 py-2 rounded bg-gray-600 hover:bg-gray-700 focus:bg-gray-800 shadow-lg"
+                id="authWithGoogle"
+            >
+                <svg class="nline-block h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
+                    <path fill="#ffffff" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"/>
+                </svg>
+            </button>
+        </div>
+
+	</div>
+	<p class="mt-4 text-center text-gray-400 text-xs">
+		&copy;2022 EKWALI. All rights reserved.
+	</p>
+
+<input type="submit" value="login">
+<input type="hidden" name="next" value="{{ next }}">
+</form>
+
+<form id="firebaseForm" method="post" action="{% url 'firebase-login' %}">
+    {% csrf_token %}
+    <input type="hidden" name="firebaseAccessToken" id="firebaseAccessToken" value="" />
+    <input class="inline-block mt-2 px-6 py-2 rounded bg-gray-600 hover:bg-gray-700 focus:bg-gray-800 shadow-lg" type="submit" value="envoyer" />
+</form>
+</div>
+
+{# Assumes you set up the password_reset view in your URLconf #}
+{# <p><a href="{% url 'password_reset' %}">Lost password?</a></p> #}
+
+{% endblock %}
